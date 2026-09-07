@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  POP unattended build. Fires 09:00 Saturday, machine local time.
+  System timezone is Europe/Lisbon, so this is 09:00 Lisbon as specified.
+
+  Install:  cp com.jacob.pop.build.plist ~/Library/LaunchAgents/
+            launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.jacob.pop.build.plist
+  Verify:   launchctl print gui/$(id -u)/com.jacob.pop.build | head -20
+  Cancel:   launchctl bootout gui/$(id -u)/com.jacob.pop.build
+
+  run_build.sh disarms this job itself after a run, so it is effectively one-shot.
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jacob.pop.build</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/zsh</string>
+        <string>/Users/Jacob/Projects/POP/run_build.sh</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/Jacob/Projects/POP</string>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>6</integer>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/Jacob/Projects/POP/logs/launchd.out</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/Jacob/Projects/POP/logs/launchd.err</string>
+</dict>
+</plist>

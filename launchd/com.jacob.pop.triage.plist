@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  POP weekly triage — Sunday 18:00 Europe/Warsaw (== POP_TZ).
+
+  TIMEZONE, AND THIS ONE MATTERS. launchd's StartCalendarInterval fires in
+  SYSTEM local time (Europe/Warsaw on this machine). POP computes its week
+  boundary in POP_TZ, which is now ALSO Europe/Warsaw, so the two agree and
+  this fires exactly on the boundary: Sunday 18:00 local.
+
+  If POP_TZ and the system timezone ever diverge again, this Hour must be
+  offset to match POP_TZ, or roll_over_week() closes the wrong week every
+  Sunday. Firing an hour early is the dangerous direction.
+
+  Weekday 0 is Sunday.
+
+  Unlike cron, launchd runs a MISSED calendar job at the next wake. If the Mac
+  is asleep at 18:00 on a Sunday, triage still happens — cron would silently
+  skip the week, leaving the week unrolled, debt uncomputed and promotions
+  un-lapsed until someone noticed.
+
+  Install:  launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.jacob.pop.triage.plist
+  Run now:  launchctl kickstart -p gui/$(id -u)/com.jacob.pop.triage
+  Stop:     launchctl bootout   gui/$(id -u)/com.jacob.pop.triage
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jacob.pop.triage</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/Jacob/Projects/POP/.venv/bin/python</string>
+        <string>/Users/Jacob/Projects/POP/triage.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/Jacob/Projects/POP</string>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Weekday</key>
+        <integer>0</integer>
+        <key>Hour</key>
+        <integer>18</integer>
+        <key>Minute</key>
+        <integer>0</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/Jacob/Projects/POP/logs/triage.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/Jacob/Projects/POP/logs/triage.log</string>
+</dict>
+</plist>

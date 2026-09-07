@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  POP daily poll — resume_point deltas, deadline surfacing, allowance alerts.
+
+  TIMEZONE. launchd's StartCalendarInterval fires in SYSTEM local time
+  (Europe/Warsaw), which now matches POP_TZ. The exact hour does not matter
+  for the poll — only that it runs once a day.
+  It is off the hour deliberately, to avoid piling onto :00.
+
+  Unlike cron, launchd runs a MISSED calendar job at the next wake. On a laptop
+  that sleeps, this is the difference between losing a day of measurement and
+  not losing it.
+
+  Install:  launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.jacob.pop.poll.plist
+  Run now:  launchctl kickstart -p gui/$(id -u)/com.jacob.pop.poll
+  Stop:     launchctl bootout   gui/$(id -u)/com.jacob.pop.poll
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jacob.pop.poll</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/Jacob/Projects/POP/.venv/bin/python</string>
+        <string>/Users/Jacob/Projects/POP/poll.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/Jacob/Projects/POP</string>
+
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>9</integer>
+        <key>Minute</key>
+        <integer>17</integer>
+    </dict>
+
+    <key>RunAtLoad</key>
+    <false/>
+
+    <key>StandardOutPath</key>
+    <string>/Users/Jacob/Projects/POP/logs/poll.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/Jacob/Projects/POP/logs/poll.log</string>
+</dict>
+</plist>

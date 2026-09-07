@@ -1,0 +1,18 @@
+# Secrets
+.env
+
+# Local data
+data/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Telethon / session artefacts (Pulse coexists on the same VPS)
+*.session
+*.session-journal
+
+# Runtime logs
+logs/

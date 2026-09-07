@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!--
+  POP bot — long polling, always on.
+
+  KeepAlive restarts it on crash and after a reboot. Without this the bot only
+  lives as long as whatever shell started it.
+
+  Telegram allows exactly ONE getUpdates poller per token. Before bootstrapping
+  this, make sure no other instance is running:
+
+      ps -eo pid,command | grep "[b]ot.py"
+
+  Install:  launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.jacob.pop.bot.plist
+  Stop:     launchctl bootout   gui/$(id -u)/com.jacob.pop.bot
+  Status:   launchctl print     gui/$(id -u)/com.jacob.pop.bot | head -20
+-->
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.jacob.pop.bot</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/Jacob/Projects/POP/.venv/bin/python</string>
+        <string>/Users/Jacob/Projects/POP/bot.py</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/Jacob/Projects/POP</string>
+
+    <key>RunAtLoad</key>
+    <true/>
+
+    <key>KeepAlive</key>
+    <true/>
+
+    <!-- Do not respawn faster than once every 30s if it crash-loops. -->
+    <key>ThrottleInterval</key>
+    <integer>30</integer>
+
+    <key>StandardOutPath</key>
+    <string>/Users/Jacob/Projects/POP/logs/bot.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/Jacob/Projects/POP/logs/bot.log</string>
+</dict>
+</plist>
